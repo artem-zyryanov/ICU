@@ -47,8 +47,8 @@
 					<ContentPage Title="Clips" Icon="icon_navigation_burger">
 						<StackLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
 							<AbsoluteLayout VerticalOptions="Start" HorizontalOptions="FillAndExpand">
-								<DatePicker x:Name="ClipsDatePicker" AbsoluteLayout.LayoutBounds="0, 0, 0.5, 1" AbsoluteLayout.LayoutFlags="All" />
-								<Picker x:Name="CameraPicker" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="1, 0, 0.5, 1" />
+								<DatePicker x:Name="ClipsDatePicker" HeightRequest ="{StaticResource LargePressableSize}" AbsoluteLayout.LayoutBounds="0, 0, 0.5, 1" AbsoluteLayout.LayoutFlags="All" />
+								<Picker x:Name="CameraPicker" HeightRequest ="{StaticResource LargePressableSize}" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="1, 0, 0.5, 1" />
 							</AbsoluteLayout>
 							<WebView x:Name="ClipsWebView" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" />
 						</StackLayout>
