@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+		xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+		xmlns:local="clr-namespace:ICUVideoSecurity"
+		xmlns:c="clr-namespace:ICUVideoSecurity.Controls;assembly=ICUVideoSecurity"
+		x:Class="ICUVideoSecurity.LoginPage"
+		BackgroundColor="{StaticResource BackgroundColor}">
+	<StackLayout VerticalOptions="FillAndExpand"
+			HorizontalOptions="FillAndExpand"
+			Spacing="0">
+		<Image
+			Margin="48, 62, 48, 24"
+            WidthRequest="178"
+			Source="logo.png"/>
+		<c:Entry x:Name="UsernameEntry"
+			Placeholder="Username"
+			HorizontalOptions="CenterAndExpand"
+			Keyboard="Email"
+            Margin="{StaticResource ContentSpacingThickness}"
+			Style="{StaticResource entryStyle}"/>
+		<c:Entry x:Name="PasswordEntry"
+			Placeholder="Password"
+			HorizontalOptions="CenterAndExpand"
+			IsPassword="true"
+			Margin="{StaticResource ContentSpacingThickness}"
+			Style="{StaticResource entryStyle}"/>
+		<Button x:Name="LoginButton"
+			IsEnabled="false"
+			Text="LOGIN"
+			Margin="{StaticResource LargeContentSpacingThickness}"
+			FontSize="{StaticResource SmallTextSize}"
+			Style="{StaticResource buttonStyle}" />
+		<Label
+			x:Name="HelpLabel"
+			Text="Need help?"
+			VerticalOptions="EndAndExpand"
+            Margin="1"
+			FontSize="{StaticResource SmallTextSize}"
+			TextColor="{StaticResource ContrastFontColor}"
+			HorizontalOptions="CenterAndExpand" />
+		<Label
+			x:Name="SiteLabel"
+			Text="www.icu-tech.com" 
+			VerticalOptions="End"
+            Margin="13"
+            FontSize="{StaticResource SmallTextSize}"
+            TextColor="{StaticResource GrayFontColor}"
+			HorizontalOptions="CenterAndExpand" />
+	</StackLayout>
+</ContentPage>

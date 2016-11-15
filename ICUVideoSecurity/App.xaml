@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Application xmlns="http://xamarin.com/schemas/2014/forms"
+		xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+		xmlns:c="clr-namespace:ICUVideoSecurity.Controls;assembly=ICUVideoSecurity"
+		x:Class="ICUVideoSecurity.App">
+    <Application.Resources>
+        <ResourceDictionary>
+			<Style TargetType="Label">
+              <Setter Property="TextColor" Value="#17817C" />
+            </Style>
+			<x:Double x:Key="ContentPadding">15</x:Double>
+            <GridLength x:Key="ContentPaddingGridLength">15</GridLength>
+            <Thickness x:Key="ContentPaddingThickness">15</Thickness>
+
+            <x:Double x:Key="ContentSpacing">8</x:Double>
+            <GridLength x:Key="ContentSpacingGridLength">8</GridLength>
+            <Thickness x:Key="ContentSpacingThickness">8</Thickness>
+			<Thickness x:Key="LargeContentSpacingThickness">24</Thickness>
+
+            <x:Double x:Key="SmallPressableSize">16</x:Double>
+            <x:Int32 x:Key="SmallPressableRadius">8</x:Int32>
+            <x:Double x:Key="MediumPressableSize">36</x:Double>
+            <x:Int32 x:Key="MediumPressableRadius">18</x:Int32>
+            <x:Double x:Key="LargePressableSize">44</x:Double>
+            <x:Int32 x:Key="LargePressableRadius">22</x:Int32>
+
+            <x:Double x:Key="SmallTextSize">11</x:Double>
+            <x:Double x:Key="MediumTextSize">18</x:Double>
+            <x:Double x:Key="MediumMassTextSize">18</x:Double>
+
+            <x:String x:Key="DefaultFontFamily">FuturaPT-Book</x:String>
+            <x:String x:Key="AccentFontFamily">FuturaPT-Demi</x:String>
+
+            <FontAttributes x:Key="DefaultFontAttributes">None</FontAttributes>
+            <FontAttributes x:Key="AccentFontAttributes">Bold</FontAttributes>
+			
+			<Color x:Key="BackgroundColor">#FFEFEFEF</Color>
+			<Color x:Key="EntryBackgroundColor">#FFDADADA</Color>
+			<Color x:Key="ContrastBackgroundColor">#FF243039</Color>
+			<Color x:Key="ContrastFontColor">#FF243039</Color>
+			<Color x:Key="GrayFontColor">#FFABABAC</Color>
+
+			
+			<Style x:Key="entryStyle" TargetType="c:Entry">
+                <Setter Property="HorizontalOptions" Value="Center" />
+                <Setter Property="BackgroundColor" Value="{StaticResource EntryBackgroundColor}"/>
+				<Setter Property="PlaceholderColor" Value="#FFABABAC" />
+                <Setter Property="WidthRequest" Value="270" />
+                <Setter Property="HeightRequest" Value="{StaticResource LargePressableSize}" />
+                <Setter Property="TextColor" Value="Black"/>
+                <Setter Property="FontSize" Value="{StaticResource SmallTextSize}"/>
+	            <Setter Property="BorderRadius" Value="{StaticResource LargePressableRadius}" />
+                <Setter Property="BorderColor" Value="#FFF5F5F5" />
+                <Setter Property="BorderWidth" Value="1" />
+            </Style>
+            <Style x:Key="buttonStyle" TargetType="Button">
+                <Setter Property="HorizontalOptions" Value="Center" />
+                <Setter Property="BackgroundColor" Value="{StaticResource ContrastBackgroundColor}"/>
+                <Setter Property="WidthRequest" Value="133" />
+				<Setter Property="HeightRequest" Value="{StaticResource MediumPressableSize}" />
+				<Setter Property="BorderRadius" Value="{StaticResource MediumPressableRadius}" />
+                <Setter Property="TextColor" Value="White"/>
+            </Style>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

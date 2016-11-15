@@ -1,0 +1,7 @@
+/Users/art_z/Projects/ICUVideoSecurity/UITests/obj/Debug/.NETFramework,Version=v4.5.AssemblyAttribute.cs
+/Users/art_z/Projects/ICUVideoSecurity/UITests/bin/Debug/ICUVideoSecurity.UITests.dll.mdb
+/Users/art_z/Projects/ICUVideoSecurity/UITests/bin/Debug/ICUVideoSecurity.UITests.dll
+/Users/art_z/Projects/ICUVideoSecurity/UITests/obj/Debug/ICUVideoSecurity.UITests.dll
+/Users/art_z/Projects/ICUVideoSecurity/UITests/obj/Debug/ICUVideoSecurity.UITests.dll.mdb
+/Users/art_z/Projects/ICUVideoSecurity/UITests/bin/Debug/nunit.framework.dll
+/Users/art_z/Projects/ICUVideoSecurity/UITests/bin/Debug/Xamarin.UITest.dll
