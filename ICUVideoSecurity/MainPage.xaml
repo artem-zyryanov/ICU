@@ -15,7 +15,7 @@
 					Intent="Menu">
 				<TableView.Root Title="Menu">
 					<TableSection>
-						<SwitchCell x:Name="GuardMeCell" Text="Guard me:">
+						<SwitchCell x:Name="GuardMeCell" Text="Guard me:" IsEnabled="false">
 						</SwitchCell>
 						<ViewCell>
 							<StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" Padding="15, 7">

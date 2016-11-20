@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using ICUVideoSecurity.iOS.ICUTechServiceProxy;
 
 namespace ICUVideoSecurity.iOS
@@ -7,86 +8,44 @@ namespace ICUVideoSecurity.iOS
     {
         readonly IICUTechservice icuTechservice;
 
-        public event EventHandler<ICUServiceResponse<User>> LoginCompleted;
-        public event EventHandler<ICUServiceResponse<Location[]>> GetLocationsCompleted;
-        public event EventHandler<ICUServiceResponse<Camera[]>> GetCamerasCompleted;
-        public event EventHandler<ICUServiceResponse<object>> SetAlarmCompleted;
-
         public ICUTechService()
         {
             icuTechservice = new IICUTechservice();
-            icuTechservice.LoginCompleted += OnLoginCompleted;
-            icuTechservice.GetLocationsCompleted += OnGetLocationsCompleted;
-            icuTechservice.GetCamerasCompleted += OnGetCamerasCompleted;
-            icuTechservice.SetAlarmCompleted += OnSetAlarmCompleted;
         }
 
-        void OnSetAlarmCompleted(object sender, SetAlarmCompletedEventArgs e)
-        {
-            SetAlarmCompleted?.Invoke(this, new ICUServiceResponse<object>(e.Result, e.Cancelled, e.Error));
-        }
-
-        void OnGetCamerasCompleted(object sender, GetCamerasCompletedEventArgs e)
-        {
-            GetCamerasCompleted?.Invoke(this, new ICUServiceResponse<Camera[]>(e.Result, e.Cancelled, e.Error));
-        }
-
-        void OnGetLocationsCompleted(object sender, GetLocationsCompletedEventArgs e)
-        {
-            GetLocationsCompleted?.Invoke(this, new ICUServiceResponse<Location[]>(e.Result, e.Cancelled, e.Error));
-        }
-
-        void OnLoginCompleted(object sender, LoginCompletedEventArgs e)
-        {
-            LoginCompleted?.Invoke(this, new ICUServiceResponse<User>(e.Result, e.Cancelled, e.Error));
-        }
-
-        public void LoginAsync(string username, string password)
+        private async Task<ICUServiceResponse<T>> InvokeAsync<T>(Func<string> method)
         {
             try
             {
-                icuTechservice.LoginAsync(username, password, string.Empty);
+                var task = new Task<string>(method);
+                task.Start();
+                var result = await task;
+                return new ICUServiceResponse<T>(result, false, null);
             }
             catch (Exception e)
             {
-                LoginCompleted?.Invoke(this, new ICUServiceResponse<User>(string.Empty, false, e));
+                return new ICUServiceResponse<T>(string.Empty, false, e);
             }
         }
 
-        public void GetLocationsAsync(int entityId, string username, string password)
+        public async Task<ICUServiceResponse<User>> LoginAsync(string username, string password)
         {
-            try
-            {
-                icuTechservice.GetLocationsAsync(entityId, username, password);
-            }
-            catch (Exception e)
-            {
-                GetLocationsCompleted?.Invoke(this, new ICUServiceResponse<Location[]>(string.Empty, false, e));
-            }
+            return await InvokeAsync<User>(() => icuTechservice.Login(username, password, string.Empty));
         }
 
-        public void GetCamerasAsync(int entityId, string username, string password, int locationId)
+        public async Task<ICUServiceResponse<Location[]>> GetLocationsAsync(int entityId, string username, string password)
         {
-            try
-            {
-                icuTechservice.GetCamerasAsync(entityId, username, password, locationId);
-            }
-            catch (Exception e)
-            {
-                GetCamerasCompleted?.Invoke(this, new ICUServiceResponse<Camera[]>(string.Empty, false, e));
-            }
+            return await InvokeAsync<Location[]>(() => icuTechservice.GetLocations(entityId, username, password));
         }
 
-        public void SetAlarmAsync(int entityId, string username, string password, int status, int locationId)
+        public async Task<ICUServiceResponse<Camera[]>> GetCamerasAsync(int entityId, string username, string password, int locationId)
         {
-            try
-            {
-                icuTechservice.SetAlarmAsync(entityId, username, password, status, locationId);
-            }
-            catch (Exception e)
-            {
-                SetAlarmCompleted?.Invoke(this, new ICUServiceResponse<object>(string.Empty, false, e));
-            }
+            return await InvokeAsync<Camera[]>(() => icuTechservice.GetCameras(entityId, username, password, locationId));
+        }
+
+        public async Task<ICUServiceResponse<object>> SetAlarmAsync(int entityId, string username, string password, int status, int locationId)
+        {
+            return await InvokeAsync<object>(() => icuTechservice.SetAlarm(entityId, username, password, status, locationId));
         }
     }
 }

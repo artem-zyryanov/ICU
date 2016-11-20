@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace ICUVideoSecurity
@@ -50,7 +51,7 @@ namespace ICUVideoSecurity
             Device.OpenUri(new Uri("http://www.icu-tech.com/il/"));
         }
 
-        void OnLoginCompleted(object sender, ICUServiceResponse<User> e)
+        async Task OnLoginCompleted(object sender, ICUServiceResponse<User> e)
         {
             var tempPage = MainPage;
             try
@@ -65,8 +66,9 @@ namespace ICUVideoSecurity
                 mp.CameraChanged += OnClipsParamsChanged;
                 mp.DateChanged += OnClipsParamsChanged;
                 mp.GuardMeChanged += OnGuardMeChanged;
-                icuTechService.GetLocationsAsync(currentUser.EntityId, Settings.Username, Settings.Password);
+                var r = await icuTechService.GetLocationsAsync(currentUser.EntityId, Settings.Username, Settings.Password);
                 MainPage = mp;
+                OnGetLocationsCompleted(null, r);
             }
             finally
             {
@@ -81,14 +83,16 @@ namespace ICUVideoSecurity
             return true;
         }
 
-        void OnGuardMeChanged(object sender, EventArgs e)
+        async void OnGuardMeChanged(object sender, EventArgs e)
         {
             var mp = MainPage as MainPage;
             if (mp == null) return;
             var lid = Settings.Lid;
-            var locationId = mp.GetSelectedLocation().LocationId;
+            var locationId = mp.GetSelectedLocation()?.LocationId;
+            if (!locationId.HasValue) return;
             var status = mp.GetGuardMeStatus() ? 1 : 0;
-            icuTechService.SetAlarmAsync(currentUser.EntityId, Settings.Username, Settings.Password, status, locationId);
+            var r = await icuTechService.SetAlarmAsync(currentUser.EntityId, Settings.Username, Settings.Password, status, locationId.Value);
+            OnSetAlarmCompleted(null, r);
         }
 
         void OnClipsParamsChanged(object sender, EventArgs e)
@@ -96,21 +100,23 @@ namespace ICUVideoSecurity
             var mp = MainPage as MainPage;
             if (mp == null) return;
             var lid = Settings.Lid;
-            var locationId = mp.GetSelectedLocation().LocationId;
+            var locationId = mp.GetSelectedLocation()?.LocationId;
             var date = mp.GetSelectedClipsDate().ToString("yyyy-MM-dd");
-            var cameraId = mp.GetSelectedCamera().CameraId;
+            var cameraId = mp.GetSelectedCamera()?.CameraId;
             mp.ClipsSource = $"{server}mobile/clips.php?lid={lid}&location={locationId}&datefrom={date}&dateto={date}&camera={cameraId}";
         }
 
-        void OnLocationChanged(object sender, EventArgs e)
+        async void OnLocationChanged(object sender, EventArgs e)
         {
             var mp = MainPage as MainPage;
             if (mp == null) return;
             var lid = Settings.Lid;
-            var locationId = mp.GetSelectedLocation().LocationId;
+            var locationId = mp.GetSelectedLocation()?.LocationId;
+            if (!locationId.HasValue) return;
             mp.LiveViewSource = $"{server}mobile/liveview.php?lid={lid}&location={locationId}";
             mp.AlertsSource = $"{server}mobile/alerts.php?lid={lid}&location={locationId}";
-            icuTechService.GetCamerasAsync(currentUser.EntityId, Settings.Username, Settings.Password, locationId);
+            var r = await icuTechService.GetCamerasAsync(currentUser.EntityId, Settings.Username, Settings.Password, locationId.Value);
+            OnGetCamerasCompleted(null, r);
         }
 
         void OnLogout(object sender, EventArgs e)
@@ -126,26 +132,22 @@ namespace ICUVideoSecurity
             ShowLoginPage();
         }
 
-        void OnLogin(object sender, LoginEventArgs e)
+        async void OnLogin(object sender, LoginEventArgs e)
         {
             MainPage.IsEnabled = false;
             Settings.Username = e.Username;
             Settings.Password = e.Password;
-            TryLogin();
+            await TryLogin();
         }
 
-        void TryLogin()
+        async Task TryLogin()
         {
-            icuTechService.LoginAsync(Settings.Username, Settings.Password);
+            var r = await icuTechService.LoginAsync(Settings.Username, Settings.Password);
+            await OnLoginCompleted(this, r);
         }
 
         protected override void OnStart()
         {
-            icuTechService.LoginCompleted += OnLoginCompleted;
-            icuTechService.GetLocationsCompleted += OnGetLocationsCompleted;
-            icuTechService.GetCamerasCompleted += OnGetCamerasCompleted;
-            icuTechService.SetAlarmCompleted += OnSetAlarmCompleted;
-
             ShowLoginPage();
             if (!string.IsNullOrWhiteSpace(Settings.Username) && !string.IsNullOrWhiteSpace(Settings.Password))
             {

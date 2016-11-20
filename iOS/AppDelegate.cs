@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Bugsnag;
 using Foundation;
 using UIKit;
@@ -13,10 +12,15 @@ namespace ICUVideoSecurity.iOS
         private BugsnagClient bugsnagClient;
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
         {
-           
-            bugsnagClient = new BugsnagClient("0b4e3a9956bfbe92d6d6969abda8b988")
+
+            bugsnagClient = new BugsnagClient("9a8d0d1e025c5c819e2bf7c52a679151")
             {
+                DeviceId = "test",
+                ProjectNamespaces = new List<string> { "ICUVideoSecurity." },
+                NotifyReleaseStages = new List<string> { "production" },
+                ReleaseStage = "production"
             };
+            bugsnagClient.AutoNotify = true;
             AppDomain.CurrentDomain.UnhandledException += OnException;
             global::Xamarin.Forms.Forms.Init();
 
@@ -42,6 +46,7 @@ namespace ICUVideoSecurity.iOS
 
         public override void FailedToRegisterForRemoteNotifications(UIApplication application, NSError error)
         {
+            bugsnagClient.Notify(new ArgumentException("Non-fatal"));
             //base.FailedToRegisterForRemoteNotifications(application, error);
         }
 
@@ -49,5 +54,5 @@ namespace ICUVideoSecurity.iOS
         {
             //base.ReceivedRemoteNotification(application, userInfo);
         }
-   }
+    }
 }

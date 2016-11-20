@@ -12,7 +12,7 @@ namespace ICUVideoSecurity.iOS
         {
             TabBar.TintAdjustmentMode = UIKit.UIViewTintAdjustmentMode.Normal;
             TabBar.TintColor = UIKit.UIColor.White;
-            TabBar.UnselectedItemTintColor = UIKit.UIColor.LightGray;
+            //TabBar.UnselectedItemTintColor = UIKit.UIColor.LightGray;
             //TabBar.BarTintColor = UIKit.UIColor.FromRGB(8, 11, 13);
             TabBar.BarTintColor = UIKit.UIColor.FromRGBA(36, 48, 57, 255);
             TabBar.TintAdjustmentMode = UIKit.UIViewTintAdjustmentMode.Normal;

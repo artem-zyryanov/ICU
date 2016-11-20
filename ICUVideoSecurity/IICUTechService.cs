@@ -1,19 +1,13 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace ICUVideoSecurity
 {
     public interface IICUTechService
     {
-        event EventHandler<ICUServiceResponse<User>> LoginCompleted;
-        void LoginAsync(string username, string password);
-
-        event EventHandler<ICUServiceResponse<Location[]>> GetLocationsCompleted;
-        void GetLocationsAsync(int entityId, string username, string password);
-
-        event EventHandler<ICUServiceResponse<Camera[]>> GetCamerasCompleted;
-        void GetCamerasAsync(int entityId, string username, string password, int locationId);
-
-        event EventHandler<ICUServiceResponse<object>> SetAlarmCompleted;
-        void SetAlarmAsync(int entityId, string username, string password, int status, int locationId);
+        Task<ICUServiceResponse<User>> LoginAsync(string username, string password);
+        Task<ICUServiceResponse<Location[]>>  GetLocationsAsync(int entityId, string username, string password);
+        Task<ICUServiceResponse<Camera[]>>  GetCamerasAsync(int entityId, string username, string password, int locationId);
+        Task<ICUServiceResponse<object>>  SetAlarmAsync(int entityId, string username, string password, int status, int locationId);
     }
 }

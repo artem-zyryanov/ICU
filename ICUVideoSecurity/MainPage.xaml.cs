@@ -29,7 +29,7 @@ namespace ICUVideoSecurity
 
         void OnGuardMeCellOnChanged(object sender, ToggledEventArgs e)
         {
-            if(!preventFireGuardMeChanged)
+            if (!preventFireGuardMeChanged)
                 GuardMeChanged?.Invoke(this, EventArgs.Empty);
         }
 
@@ -94,7 +94,7 @@ namespace ICUVideoSecurity
 
         public Camera GetSelectedCamera()
         {
-            var selectedCameraName = CameraPicker.Items[CameraPicker.SelectedIndex];
+            var selectedCameraName = CameraPicker.SelectedIndex >= 0 ? CameraPicker.Items[CameraPicker.SelectedIndex] : null;
             var camera = Array.Find(Cameras, x => x.CameraName == selectedCameraName);
             return camera;
         }
@@ -113,13 +113,13 @@ namespace ICUVideoSecurity
         {
             LocationChanged?.Invoke(this, EventArgs.Empty);
             preventFireGuardMeChanged = true;
-            GuardMeCell.On = GetSelectedLocation().Alarm == 1;
+            GuardMeCell.On = GetSelectedLocation()?.Alarm == 1;
             preventFireGuardMeChanged = false;
         }
 
         public Location GetSelectedLocation()
         {
-            var selectedLocationName = LocationPicker.Items[LocationPicker.SelectedIndex];
+            var selectedLocationName = LocationPicker.SelectedIndex >= 0 ? LocationPicker.Items[LocationPicker.SelectedIndex] : null;
             var location = Array.Find(Locations, x => x.LocatioName == selectedLocationName);
             return location;
         }
@@ -173,6 +173,7 @@ namespace ICUVideoSecurity
             if (LocationPicker.Items.Count > 0)
                 LocationPicker.SelectedIndex = 0;
             LocationPicker.IsEnabled = LocationPicker.Items.Count > 1;
+            GuardMeCell.IsEnabled = LocationPicker.Items.Count > 0;
         }
     }
 
