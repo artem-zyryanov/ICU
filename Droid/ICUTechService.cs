@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading;
 using System.Threading.Tasks;
 using ICUVideoSecurity.Droid.ICUTechServiceProxy;
 
@@ -47,6 +46,11 @@ namespace ICUVideoSecurity.Droid
         public async Task<ICUServiceResponse<object>> SetAlarmAsync(int entityId, string username, string password, int status, int locationId)
         {
             return await InvokeAsync<object>(() => icuTechservice.SetAlarm(entityId, username, password, status, locationId));
+        }
+
+        public async Task<ICUServiceResponse<object>> PushRegisterDevice(int entityId, string username, string password, string deviceToken, bool allowNotification)
+        {
+            return await InvokeAsync<object>(() => icuTechservice.PushRegisterDevice(entityId, username, password, null, deviceToken, 2, allowNotification));
         }
     }
 }

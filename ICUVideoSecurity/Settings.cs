@@ -1,10 +1,9 @@
-﻿using System;
-using Plugin.Settings;
+﻿using Plugin.Settings;
 using Plugin.Settings.Abstractions;
 
 namespace ICUVideoSecurity
 {
-public static class Settings
+    public static class Settings
     {
         private static ISettings AppSettings
         {
@@ -16,9 +15,14 @@ public static class Settings
 
         #region Setting Constants
 
-        private const string UsernameKey = "Username";
-        private const string PasswordKey = "Password";
-        private const string LidKey = "Lid";
+        const string UsernameKey = "Username";
+        const string PasswordKey = "Password";
+        const string LidKey = "Lid";
+        private const string EntityIdKey = "EntityId";
+        private const string DeviceTokenKey = "DeviceToken";
+
+        private const string LastLocationKey = "LastLocationId";
+        private const string LastCameraKey = "LastCameraId";
 
         private static readonly string SettingsDefault = string.Empty;
 
@@ -58,6 +62,54 @@ public static class Settings
             set
             {
                 AppSettings.AddOrUpdateValue(LidKey, value);
+            }
+        }
+
+        public static string DeviceToken
+        {
+            get
+            {
+                return AppSettings.GetValueOrDefault(DeviceTokenKey, SettingsDefault);
+            }
+            set
+            {
+                AppSettings.AddOrUpdateValue(DeviceTokenKey, value);
+            }
+        }
+
+        public static int EntityId
+        {
+            get
+            {
+                return AppSettings.GetValueOrDefault(EntityIdKey, -1);
+            }
+            set
+            {
+                AppSettings.AddOrUpdateValue(EntityIdKey, value);
+            }
+        }
+
+        public static int LastLocationId
+        {
+            get
+            {
+                return AppSettings.GetValueOrDefault(LastLocationKey, -1);
+            }
+            set
+            {
+                AppSettings.AddOrUpdateValue(LastLocationKey, value);
+            }
+        }
+
+        public static int LastCameraId
+        {
+            get
+            {
+                return AppSettings.GetValueOrDefault(LastCameraKey, -1);
+            }
+            set
+            {
+                AppSettings.AddOrUpdateValue(LastCameraKey, value);
             }
         }
     }

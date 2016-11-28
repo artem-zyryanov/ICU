@@ -10,7 +10,6 @@ namespace ICUVideoSecurity.iOS
     {
         public TabbedPageRenderer()
         {
-            TabBar.TintAdjustmentMode = UIKit.UIViewTintAdjustmentMode.Normal;
             TabBar.TintColor = UIKit.UIColor.White;
             //TabBar.UnselectedItemTintColor = UIKit.UIColor.LightGray;
             //TabBar.BarTintColor = UIKit.UIColor.FromRGB(8, 11, 13);

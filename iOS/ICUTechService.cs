@@ -47,5 +47,10 @@ namespace ICUVideoSecurity.iOS
         {
             return await InvokeAsync<object>(() => icuTechservice.SetAlarm(entityId, username, password, status, locationId));
         }
+
+        public async Task<ICUServiceResponse<object>> PushRegisterDevice(int entityId, string username, string password, string deviceToken, bool allowNotification)
+        {
+            return await InvokeAsync<object>(()=>icuTechservice.PushRegisterDevice(entityId, username, password, deviceToken, null, 1, allowNotification));
+        }
     }
 }

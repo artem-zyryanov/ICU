@@ -7,9 +7,11 @@ using UIKit;
 namespace ICUVideoSecurity.iOS
 {
     [Register("AppDelegate")]
-    public partial class AppDelegate : global::Xamarin.Forms.Platform.iOS.FormsApplicationDelegate
+    public partial class AppDelegate : Xamarin.Forms.Platform.iOS.FormsApplicationDelegate
     {
-        private BugsnagClient bugsnagClient;
+        App icuApp;
+        BugsnagClient bugsnagClient;
+
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
         {
 
@@ -22,37 +24,39 @@ namespace ICUVideoSecurity.iOS
             };
             bugsnagClient.AutoNotify = true;
             AppDomain.CurrentDomain.UnhandledException += OnException;
-            global::Xamarin.Forms.Forms.Init();
+            Xamarin.Forms.Forms.Init();
 
             // Code for starting up the Xamarin Test Cloud Agent
 #if ENABLE_TEST_CLOUD
             Xamarin.Calabash.Start();
 #endif
 
-            LoadApplication(new App(new ICUTechService()));
+            icuApp = new App(new ICUTechService());
+            LoadApplication(icuApp);
             app.RegisterForRemoteNotifications();
             return base.FinishedLaunching(app, options);
         }
 
         void OnException(object sender, UnhandledExceptionEventArgs e)
         {
-            bugsnagClient.Notify((System.Exception)e.ExceptionObject);
+            bugsnagClient.Notify((Exception)e.ExceptionObject);
         }
 
         public override void RegisteredForRemoteNotifications(UIApplication application, NSData deviceToken)
         {
-            //base.RegisteredForRemoteNotifications(application, deviceToken);
+            icuApp.RegisterDeviceToken(deviceToken.Description.Replace("<", "").Replace(">", "").Replace(" ", ""));
         }
 
         public override void FailedToRegisterForRemoteNotifications(UIApplication application, NSError error)
         {
-            bugsnagClient.Notify(new ArgumentException("Non-fatal"));
-            //base.FailedToRegisterForRemoteNotifications(application, error);
+            //PushNotificationCenter.Instance.ProcessRegistrationFail(new NSErrorException(error));
         }
 
-        public override void ReceivedRemoteNotification(UIApplication application, NSDictionary userInfo)
+        public override void ReceivedRemoteNotification(UIApplication application, NSDictionary notification)
         {
-            //base.ReceivedRemoteNotification(application, userInfo);
+            //var currentState = UIApplication.SharedApplication.ApplicationState;
+            //if (currentState == UIApplicationState.Inactive || currentState == UIApplicationState.Background)
+            //    PushNotificationCenter.Instance.Notify(iOSNotificationExtractor.ExtractNotificationData(notification));
         }
     }
 }

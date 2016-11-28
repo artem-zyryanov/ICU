@@ -7,7 +7,6 @@ namespace ICUVideoSecurity
     public partial class App : Application
     {
         readonly IICUTechService icuTechService;
-        User currentUser;
         static readonly string server = "http://www.icu-tech.com/";
 
         public App(IICUTechService icuTechService)
@@ -16,25 +15,15 @@ namespace ICUVideoSecurity
             InitializeComponent();
         }
 
+        public void RegisterDeviceToken(string token)
+        {
+            Settings.DeviceToken = token;
+            icuTechService.PushRegisterDevice(Settings.EntityId, Settings.Username, Settings.Password, token, true);
+        }
+
         void OnSetAlarmCompleted(object sender, ICUServiceResponse<object> e)
         {
             if (HasError(e)) return;
-        }
-
-        void OnGetCamerasCompleted(object sender, ICUServiceResponse<Camera[]> e)
-        {
-            if (HasError(e)) return;
-            var mp = MainPage as MainPage;
-            if (mp != null)
-                mp.Cameras = e.Result;
-        }
-
-        void OnGetLocationsCompleted(object sender, ICUServiceResponse<Location[]> e)
-        {
-            if (HasError(e)) return;
-            var mp = MainPage as MainPage;
-            if (mp != null)
-                mp.Locations = e.Result;
         }
 
         void ShowLoginPage()
@@ -58,22 +47,30 @@ namespace ICUVideoSecurity
             {
                 if (HasError(e)) return;
                 Settings.Lid = e.Result.Lid;
-                currentUser = e.Result;
-                var mp = new MainPage();
-                mp.NeedHelp += OnNeedHelp;
-                mp.Logout += OnLogout;
-                mp.LocationChanged += OnLocationChanged;
-                mp.CameraChanged += OnClipsParamsChanged;
-                mp.DateChanged += OnClipsParamsChanged;
-                mp.GuardMeChanged += OnGuardMeChanged;
-                var r = await icuTechService.GetLocationsAsync(currentUser.EntityId, Settings.Username, Settings.Password);
+                Settings.EntityId = e.Result.EntityId;
+                MainPage mp = CreateMainForm();
+                var r = await icuTechService.GetLocationsAsync(Settings.EntityId, Settings.Username, Settings.Password);
+                if (HasError(r)) return;
+                mp.Locations = r.Result;
+                UpdateUrls(mp);
                 MainPage = mp;
-                OnGetLocationsCompleted(null, r);
             }
             finally
             {
                 tempPage.IsEnabled = true;
             }
+        }
+
+        MainPage CreateMainForm()
+        {
+            var page = new MainPage();
+            page.NeedHelp += OnNeedHelp;
+            page.Logout += OnLogout;
+            page.LocationChanged += OnLocationChanged;
+            page.CameraChanged += OnClipsParamsChanged;
+            page.DateChanged += OnClipsParamsChanged;
+            page.GuardMeChanged += OnGuardMeChanged;
+            return page;
         }
 
         bool HasError<T>(ICUServiceResponse<T> e)
@@ -85,38 +82,48 @@ namespace ICUVideoSecurity
 
         async void OnGuardMeChanged(object sender, EventArgs e)
         {
-            var mp = MainPage as MainPage;
+            var mp = sender as MainPage;
             if (mp == null) return;
             var lid = Settings.Lid;
             var locationId = mp.GetSelectedLocation()?.LocationId;
             if (!locationId.HasValue) return;
             var status = mp.GetGuardMeStatus() ? 1 : 0;
-            var r = await icuTechService.SetAlarmAsync(currentUser.EntityId, Settings.Username, Settings.Password, status, locationId.Value);
+            var r = await icuTechService.SetAlarmAsync(Settings.EntityId, Settings.Username, Settings.Password, status, locationId.Value);
             OnSetAlarmCompleted(null, r);
         }
 
         void OnClipsParamsChanged(object sender, EventArgs e)
         {
-            var mp = MainPage as MainPage;
+            var mp = sender as MainPage;
             if (mp == null) return;
             var lid = Settings.Lid;
             var locationId = mp.GetSelectedLocation()?.LocationId;
             var date = mp.GetSelectedClipsDate().ToString("yyyy-MM-dd");
             var cameraId = mp.GetSelectedCamera()?.CameraId;
+            Settings.LastCameraId = -1;
+            if (!cameraId.HasValue) return;
+            Settings.LastCameraId = cameraId.Value;
             mp.ClipsSource = $"{server}mobile/clips.php?lid={lid}&location={locationId}&datefrom={date}&dateto={date}&camera={cameraId}";
         }
 
         async void OnLocationChanged(object sender, EventArgs e)
         {
-            var mp = MainPage as MainPage;
+            var mp = sender as MainPage;
             if (mp == null) return;
-            var lid = Settings.Lid;
             var locationId = mp.GetSelectedLocation()?.LocationId;
+            Settings.LastLocationId = -1;
             if (!locationId.HasValue) return;
-            mp.LiveViewSource = $"{server}mobile/liveview.php?lid={lid}&location={locationId}";
-            mp.AlertsSource = $"{server}mobile/alerts.php?lid={lid}&location={locationId}";
-            var r = await icuTechService.GetCamerasAsync(currentUser.EntityId, Settings.Username, Settings.Password, locationId.Value);
-            OnGetCamerasCompleted(null, r);
+            Settings.LastLocationId = locationId.Value;
+            UpdateUrls(mp);
+            var r = await icuTechService.GetCamerasAsync(Settings.EntityId, Settings.Username, Settings.Password, locationId.Value);
+            if (HasError(r)) return;
+            mp.Cameras = r.Result;
+        }
+
+        static void UpdateUrls(MainPage mp)
+        {
+            mp.LiveViewSource = $"{server}mobile/liveview.php?lid={Settings.Lid}&location={Settings.LastLocationId}";
+            mp.AlertsSource = $"{server}mobile/alerts.php?lid={Settings.Lid}&location={Settings.LastLocationId}";
         }
 
         void OnLogout(object sender, EventArgs e)
@@ -148,12 +155,15 @@ namespace ICUVideoSecurity
 
         protected override void OnStart()
         {
-            ShowLoginPage();
-            if (!string.IsNullOrWhiteSpace(Settings.Username) && !string.IsNullOrWhiteSpace(Settings.Password))
+            if (!string.IsNullOrWhiteSpace(Settings.Lid))
             {
-                MainPage.IsEnabled = false;
+                var page = CreateMainForm();
+                UpdateUrls(page);
+                MainPage = page;
                 TryLogin();
             }
+            else
+                ShowLoginPage();
         }
 
         protected override void OnSleep()
